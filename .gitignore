@@ -1,0 +1,16 @@
+# Ignore node_modules in all subdirectories
+node_modules/
+
+# Ignore Go build and cache files
+*.exe
+*.out
+*.log
+*.test
+*.mod
+*.sum
+bin/
+vendor/
+
+# Ignore env files (to prevent exposing secrets)
+.env
+.env.local
