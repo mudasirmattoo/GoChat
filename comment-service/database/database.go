@@ -1,11 +1,10 @@
 package database
 
 import (
+	"comment-service/models"
 	"fmt"
 	"log"
 	"os"
-
-	"post/models"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -19,8 +18,6 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-
-	// Database connection string
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_USER"),
@@ -35,13 +32,6 @@ func ConnectDB() {
 		log.Fatal("Failed to connect to database:", err)
 	}
 
+	db.AutoMigrate(&models.Comments{})
 	DB = db
-	fmt.Println("Successfully connected to PostgreSQL!")
-
-	err = db.AutoMigrate(&models.Post{})
-	if err != nil {
-		log.Fatal("AutoMigrate failed:", err)
-	}
-
-	fmt.Println("Database migration successful!")
 }

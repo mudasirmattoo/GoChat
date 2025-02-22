@@ -2,10 +2,9 @@ package database
 
 import (
 	"fmt"
+	"like-service/models"
 	"log"
 	"os"
-
-	"post/models"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -38,7 +37,7 @@ func ConnectDB() {
 	DB = db
 	fmt.Println("Successfully connected to PostgreSQL!")
 
-	err = db.AutoMigrate(&models.Post{})
+	err = db.AutoMigrate(&models.Like{})
 	if err != nil {
 		log.Fatal("AutoMigrate failed:", err)
 	}
