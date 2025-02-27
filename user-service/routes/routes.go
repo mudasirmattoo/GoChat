@@ -1,8 +1,10 @@
+// routes/routes.go
 package routes
 
 import (
 	"net/http"
 	"user-service/handlers"
+	"user-service/middleware"
 )
 
 func RegisterRoutes() {
@@ -26,7 +28,6 @@ func RegisterRoutes() {
 		handlers.RenderTemplate(w, "dashboard", map[string]string{"Title": "Dashboard"})
 	})
 
-	http.HandleFunc("/register-user", handlers.RegisterHandler)
-	http.HandleFunc("/login-user", handlers.LoginHandler)
-
+	http.HandleFunc("/register-user", middleware.AuthMiddleware(handlers.RegisterHandler))
+	http.HandleFunc("/login-user", middleware.AuthMiddleware(handlers.LoginHandler))
 }

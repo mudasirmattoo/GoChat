@@ -3,7 +3,6 @@
 {{ end }}
 {{ define "content" }}
 <div class="flex h-screen bg-gray-100">
-    <!-- Sidebar -->
     <aside class="w-64 bg-white shadow-md p-6 flex flex-col">
         <h2 class="text-2xl font-bold text-blue-600">GoChat</h2>
         <nav class="mt-6 space-y-4">
@@ -30,9 +29,8 @@
         </nav>
     </aside>
 
-    <!-- Main Content -->
     <main class="flex-1 p-6">
-        <!-- Top Bar -->
+        
         <div class="flex justify-between items-center bg-white p-4 shadow-md rounded-md">
             <h2 class="text-2xl font-semibold">Dashboard</h2>
             <div class="flex items-center space-x-4">
@@ -41,7 +39,7 @@
             </div>
         </div>
 
-        <!-- Feed Section -->
+        <!-- Feed  -->
         <div class="mt-6 space-y-6">
             <div class="bg-white p-4 rounded-lg shadow-md">
                 <h3 class="text-lg font-bold">Your latest post</h3>
@@ -89,4 +87,36 @@
         </div>
     </aside>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    window.location.href = "/login"; // Redirect to login if no token
+    return;
+  }
+
+  try {
+    const response = await fetch("/dashboard", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      throw new Error("Unauthorized");
+    }
+
+    const data = await response.text();
+    document.body.innerHTML = data; // Load dashboard content
+  } catch (error) {
+    console.error("Dashboard error:", error);
+    localStorage.removeItem("token"); // Clear invalid token
+    window.location.href = "/login"; // Redirect to login
+  }
+});
+
+</script>
 {{ end }}

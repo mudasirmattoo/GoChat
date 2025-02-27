@@ -8,7 +8,12 @@
     
     <form id="loginForm" class="space-y-4">
         <input type="text" id="loginUsername" placeholder="Username" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-300 focus:outline-none">
-        <input type="password" id="loginPassword" placeholder="Password" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-300 focus:outline-none">
+
+        <div class="relative">
+            <input type="password" id="loginPassword" placeholder="Password" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-300 focus:outline-none">
+            <span class="absolute eye-icon inset-y-0 right-0 flex items-center pr-3 cursor-pointer" onclick="togglePasswordVisibility()"><i class="fa-solid fa-eye"></i></span>
+        </div>
+
         <button type="submit" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600 transition">Login</button>
     </form>
     
@@ -18,4 +23,18 @@
         <p class="text-gray-600">Don't have an account? <a href="/register" class="text-blue-600 hover:underline">Sign Up</a></p>
     </div>
 </div>
+<script>
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('loginPassword');
+    const eyeIcon = document.querySelector('.fa-eye, .fa-eye-slash'); 
+
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text'; 
+        eyeIcon.classList.replace('fa-eye', 'fa-eye-slash'); 
+    } else {
+        passwordInput.type = 'password'; 
+        eyeIcon.classList.replace('fa-eye-slash', 'fa-eye'); 
+    }
+}
+</script>
 {{ end }}

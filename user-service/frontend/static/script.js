@@ -1,5 +1,4 @@
   document.addEventListener("DOMContentLoaded", () => {
-    // console.log("JS is loaded");
     
     const loginForm = document.getElementById("loginForm");
     const registerForm = document.getElementById("registerForm");
@@ -17,24 +16,9 @@
       setTimeout(() => {
         messageDiv.textContent = "";
         messageDiv.className = "mt-4 text-center";
-      }, 5000);
+      }, 2000);
     }
-  
-    function checkFlashMessages() {
-      const flashCookie = getCookie("flash_message");
-      if (flashCookie) {
-        showMessage(decodeURIComponent(flashCookie));
-        document.cookie = "flash_message=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      }
-    }
-  
-    function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
-    }
-  
-    checkFlashMessages();
+
   
     registerForm?.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -59,17 +43,17 @@
         return;
       }
   
+
       try {
         const response = await fetch("/register-user", { 
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, email, password, confirm_password: confirmPassword }),
-          redirect: "follow",
+          // redirect: "follow",
           credentials: "include"  
         });
 
-        //server --> will handle the redirect
-        if(!response.ok && !response.redirected){
+        if(!response.ok){
           const errorText = await response.text();
           try{
             const errorJson = JSON.parse(errorText);
@@ -77,15 +61,16 @@
           } catch(e) {
             showMessage(errorText || "Registration failed", true);
           }
+        }else{
+          const data = await response.json();
+          showMessage("Registration successful!");
+
+          localStorage.setItem("token",data.token);
+          window.location.href = "/login";
+
         }
 
-        // in case --> no redirection + no error ---> manual redirection
-        if(!response.redirected){
-          showMessage("Registration successful");
-          setTimeout(() => {
-            window.location.href = "/login";
-        }, 500);
-        } 
+ 
         }catch(error){
           console.error("Registration error:", error);
           showMessage("Error connecting to server", true);
@@ -94,7 +79,7 @@
   
     loginForm?.addEventListener("submit", async (event) => {
       event.preventDefault();
-      
+    
       const username = document.getElementById("loginUsername").value.trim();
       const password = document.getElementById("loginPassword").value;
     
@@ -104,26 +89,26 @@
       }
     
       try {
-        
-        const response = await fetch("/login-user", { 
+        const response = await fetch("/login-user", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
-          credentials: "include"
+          credentials: "include",
         });
     
-        console.log("Login response status:", response.status);
-        console.log("Redirected:", response.redirected);
-        
         if (response.ok) {
+          const data = await response.json();
           showMessage("Login successful!");
+    
+          localStorage.setItem("token", data.token);
+    
           window.location.href = "/dashboard";
         } else {
           const errorText = await response.text();
           try {
             const errorJson = JSON.parse(errorText);
             showMessage(errorJson.message || "Login failed", true);
-          } catch(e) {
+          } catch (e) {
             showMessage(errorText || "Login failed", true);
           }
         }
@@ -132,6 +117,5 @@
         showMessage("Error connecting to server. Please try again.", true);
       }
     });
-  
-    // console.log("JavaScript initialized successfully");
+    
   });
