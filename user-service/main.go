@@ -13,9 +13,12 @@ func main() {
 	database.ConnectDB()
 
 	routes.RegisterRoutes()
-	// Serve static files from frontend/ directory
-	fs := http.FileServer(http.Dir("./frontend"))
-	http.Handle("/", fs)
+
+	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/javascript")
+		http.ServeFile(w, r, "frontend/static/"+r.URL.Path[len("/static/"):])
+	})
+
 	port := "9080"
 	log.Printf("user service running on %s ...\n", port)
 

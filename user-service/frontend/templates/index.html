@@ -1,0 +1,52 @@
+{{ define "index.html" }}
+{{ template "base.html" . }}
+{{ end }}
+{{ define "content" }}
+<div class=" bg-gray-50 text-gray-900">
+
+    <header class="flex flex-col items-center text-center py-20 bg-gradient-to-r from-blue-500 to-indigo-500 text-white">
+        <h1 class="text-5xl font-extrabold leading-tight">Connect, Share & Chat</h1>
+        <p class="mt-4 text-lg max-w-2xl">
+            A new way to stay connected with friends and communities. Share moments, chat in real time, and explore content.
+        </p>
+        <a href="#" class="mt-6 px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow-md hover:bg-gray-200">
+            Get Started
+        </a>
+    </header>
+
+    <section class="py-16 px-6">
+        <h2 class="text-3xl font-bold text-center">Why Choose GoChat?</h2>
+        <div class="grid md:grid-cols-3 gap-8 mt-8">
+            <div class="p-6 bg-white rounded-lg shadow-md text-center">
+                <div class="text-blue-600 text-4xl">💬</div>
+                <h3 class="mt-4 text-xl font-semibold">Real-time Chat</h3>
+                <p class="mt-2 text-gray-600">Instant messaging with secure and fast connections.</p>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md text-center">
+                <div class="text-blue-600 text-4xl">📸</div>
+                <h3 class="mt-4 text-xl font-semibold">Media Sharing</h3>
+                <p class="mt-2 text-gray-600">Share photos, videos, and updates with your friends.</p>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow-md text-center">
+                <div class="text-blue-600 text-4xl">👥</div>
+                <h3 class="mt-4 text-xl font-semibold">Community Groups</h3>
+                <p class="mt-2 text-gray-600">Join groups, follow trends, and engage with like-minded people.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-blue-600 text-white text-center">
+        <div>
+            <h2 class="text-3xl font-bold">Start Connecting Today</h2>
+            <p class="mt-4 text-lg">Join now and be part of an engaging social experience.</p>
+            <div class="mt-6"> 
+                <a href="/register" class="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow-md hover:bg-gray-200">
+                    Sign Up Now
+                </a>
+            </div>
+        </div>
+    </section>
+    
+
+  </div>
+  {{ end }}
