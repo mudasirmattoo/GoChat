@@ -64,37 +64,32 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, email, password, confirm_password: confirmPassword }),
+          redirect: "follow",
           credentials: "include"  
         });
-  
-        if (response.ok) {
-          const result = await response.json();
-          
-          showMessage(result.message || "Registration successful!");
-          registerForm.reset();
-          
-          if (result.redirect_url) {
-            setTimeout(() => {
-              window.location.href = result.redirect_url;
-            }, 1000); 
-          } else {
-            setTimeout(() => {
-              window.location.href = "/login";
-            }, 500);
-          }
-        } else {
+
+        //server --> will handle the redirect
+        if(!response.ok && !response.redirected){
           const errorText = await response.text();
-          try {
+          try{
             const errorJson = JSON.parse(errorText);
-            showMessage(errorJson.message || "Registration failed", true);
-          } catch (e) {
+            showMessage(errorJson.message || "Registration failed ", true);
+          } catch(e) {
             showMessage(errorText || "Registration failed", true);
           }
         }
-      } catch (error) {
-        console.error("Registration error:", error);
-        showMessage("Error connecting to server", true);
-      }
+
+        // in case --> no redirection + no error ---> manual redirection
+        if(!response.redirected){
+          showMessage("Registration successful");
+          setTimeout(() => {
+            window.location.href = "/login";
+        }, 500);
+        } 
+        }catch(error){
+          console.error("Registration error:", error);
+          showMessage("Error connecting to server", true);
+        }
     });
   
     loginForm?.addEventListener("submit", async (event) => {
@@ -102,42 +97,34 @@
       
       const username = document.getElementById("loginUsername").value.trim();
       const password = document.getElementById("loginPassword").value;
-  
+    
       if (!username || !password) {
         showMessage("Username and password are required", true);
         return;
       }
-  
+    
       try {
+        
         const response = await fetch("/login-user", { 
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
-          credentials: "include"  
+          credentials: "include"
         });
-  
+    
+        console.log("Login response status:", response.status);
+        console.log("Redirected:", response.redirected);
+        
         if (response.ok) {
-          const result = await response.json();
-          
-          showMessage(result.message || "Login successful!");
-          loginForm.reset();
-          
-          if (result.redirect_url) {
-            setTimeout(() => {
-              window.location.href = result.redirect_url;
-            }, 500); 
-          } else {
-            setTimeout(() => {
-              window.location.href = "/dashboard";
-            }, 1000);
-          }
+          showMessage("Login successful!");
+          window.location.href = "/dashboard";
         } else {
           const errorText = await response.text();
           try {
             const errorJson = JSON.parse(errorText);
-            showMessage(errorJson.message || "Invalid username or password", true);
-          } catch (e) {
-            showMessage(errorText || "Invalid username or password", true);
+            showMessage(errorJson.message || "Login failed", true);
+          } catch(e) {
+            showMessage(errorText || "Login failed", true);
           }
         }
       } catch (error) {

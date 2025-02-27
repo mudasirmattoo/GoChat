@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -109,13 +108,14 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &http.Cookie{
 		Name:  "flash_message",
-		Value: "Registration Ssuccessful",
+		Value: "Registration Successful",
 		Path:  "/",
-	}) //SetCookie(w http.ResponseWriter, cookie *http.Cookie)  -->SetCookie adds a Set-Cookie header to the provided [ResponseWriter]'s header
+	})
+
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+	// w.WriteHeader(http.StatusCreated)
+	// json.NewEncoder(w).Encode(user)
 
 	/*  client-side redirection
 	-----------------------------------------------------------------
@@ -128,7 +128,43 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	*/
 }
 
-// LoginHandler handles user login
+// func LoginHandler(w http.ResponseWriter, r *http.Request) {
+// 	if r.Method != http.MethodPost {
+// 		http.Error(w, "Invalid Request Method", http.StatusMethodNotAllowed)
+// 		return
+// 	}
+
+// 	var credentials struct {
+// 		Username string `json:"username"`
+// 		Password string `json:"password"`
+// 	}
+
+// 	err := json.NewDecoder(r.Body).Decode(&credentials)
+// 	if err != nil {
+// 		http.Error(w, "Invalid request body", http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	var user models.User
+// 	result := database.DB.Where("username = ?", credentials.Username).First(&user)
+// 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+// 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+// 		return
+// 	}
+
+// 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
+// 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+// 		return
+// 	}
+
+// 	http.SetCookie(w, &http.Cookie{
+// 		Name:  "flash_message",
+// 		Value: "Login successful",
+// 		Path:  "/",
+// 	})
+// 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+// }
+
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid Request Method", http.StatusMethodNotAllowed)
@@ -146,7 +182,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Fetch user from DB using GORM
 	var user models.User
 	result := database.DB.Where("username = ?", credentials.Username).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -154,23 +189,26 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Compare hashed password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
 
+	//cookie setup
 	http.SetCookie(w, &http.Cookie{
 		Name:  "flash_message",
 		Value: "Login successful",
 		Path:  "/",
 	})
-	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 
-	fmt.Fprintln(w, "Login successful")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"success": true,
+		"message": "Login successful",
+	})
 }
 
-// ServeHomePage serves the homepage
 func ServeHomePage(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "frontend/templates/index.html")
 }
